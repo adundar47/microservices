@@ -4,7 +4,7 @@ spring:
   cloud:
     kubernetes:
       config:
-        namespace: dev-kube
+        namespace: default
         sources:
           - name: common
           - name: ${spring.application.name}

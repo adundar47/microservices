@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: default
+  name: address
+  labels:
+    app: address
+spec:
+  type: NodePort
+  ports:
+    - port: 9091
+      nodePort: 31001
+      name: http
+  selector:
+    app: address

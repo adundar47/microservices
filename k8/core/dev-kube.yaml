@@ -4,3 +4,7 @@ metadata:
   name: dev-kube
   labels:
     name: dev-kube
+spec:
+  api:
+    namespaces:
+      label_selector: kiali-enabled=true
