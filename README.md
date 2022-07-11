@@ -98,6 +98,55 @@ This command add ingress to your docker desktop kubernetes.
 $ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.46.0/deploy/static/provider/cloud/deploy.yaml 
 ```
 
+### Istio:
+
+1. Install Istio
+    ```shell
+    $ export ISTIO_VERSION=1.13.3
+    $ curl -L https://istio.io/downloadIstio | sh -
+    $ export PATH="$PATH:/root/istio-${ISTIO_VERSION}/bin"
+    $ istioctl install --set profile=demo -y
+    $ kubectl get deployments,services -n istio-system
+    $ istioctl version
+    $ istioctl manifest generate --set profile=demo > $HOME/istio-generated-manifest.yaml
+    $ istioctl verify-install -f $HOME/istio-generated-manifest.yaml
+    ```
+2. Install Istio Integrations
+    ```shell
+    $ SEMVER_REGEX='[^0-9]*\([0-9]*\)[.]\([0-9]*\)[.]\([0-9]*\)\([0-9A-Za-z-]*\)'
+    $ INTEGRATIONS_VERSION=$(echo $ISTIO_VERSION | sed -e "s#$SEMVER_REGEX#\1#").$(echo $ISTIO_VERSION | sed -e "s#$SEMVER_REGEX#\2#") && echo $INTEGRATIONS_VERSION
+    $ kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-$INTEGRATIONS_VERSION/samples/addons/prometheus.yaml
+    $ kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-$INTEGRATIONS_VERSION/samples/addons/grafana.yaml
+    $ kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-$INTEGRATIONS_VERSION/samples/addons/jaeger.yaml
+    $ kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-$INTEGRATIONS_VERSION/samples/addons/kiali.yaml
+    ```
+3. Envoy Injection
+    ```shell
+    $ kubectl label namespace default istio-injection=enabled
+    ```
+4. Add Addresses to /etc/hosts
+    ```shell
+    127.0.0.1 grafana.localhost
+    127.0.0.1 prometheus.localhost
+    127.0.0.1 kiali.localhost
+    127.0.0.1 tracing.localhost
+    ```
+5. Compile project and build docker images
+    ```shell
+    $ bash build-istio.sh compile
+    ```
+6. Start Kubernetes deployments, services and ingress
+    ```shell
+    $ bash build-istio.sh start-k8
+    ```
+7. Scale Kubernetes deployments
+    ```shell
+    $ bash build-istio.sh start-k8 scale=2
+    ```
+8. Stop Kubernetes deployments, services and ingress
+    ```shell
+    $ bash build-istio.sh stop-k8
+    ```
 ### Cli Versions
 
 |            Cli            | Version |
