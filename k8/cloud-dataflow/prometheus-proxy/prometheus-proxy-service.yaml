@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-proxy
+  namespace: istio-system
+  labels:
+    component: "server"
+    app: prometheus-proxy
+    release: prometheus-proxy
+spec:
+  selector:
+    component: "server"
+    app: prometheus-proxy
+    release: prometheus-proxy
+  ports:
+    - name: scrape
+      port: 8080
+      targetPort: 8080
+    - name: rsocket
+      port: 7001
+      targetPort: 7001
+  type: NodePort

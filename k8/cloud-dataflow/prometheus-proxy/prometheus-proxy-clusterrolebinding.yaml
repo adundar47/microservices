@@ -1,0 +1,15 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: prometheus-proxy
+  labels:
+    component: "server"
+    app: prometheus-proxy
+subjects:
+  - kind: ServiceAccount
+    name: prometheus-proxy
+    namespace: istio-system
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io

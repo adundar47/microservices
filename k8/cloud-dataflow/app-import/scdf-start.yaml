@@ -1,0 +1,59 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: scdf-import
+  labels:
+    app: scdf-import
+spec:
+  template:
+    metadata:
+      labels:
+        app: scdf-import
+    spec:
+      containers:
+        - name: scdf-import
+          image: springcloud/baseimage:1.0.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+#          resources:
+#            limits:
+#              cpu: 100m
+#              memory: 512Mi
+          volumeMounts:
+            - name: scdf-import-scripts
+              mountPath: /startup
+          command: ["/bin/sh","-c"]
+          args: ["/startup/scdf-stream.sh; /startup/scdf-task.sh"]
+      #          command: ["/startup/scdf-stream.sh", "/startup/scdf-task.sh"]
+      restartPolicy: Never
+      volumes:
+        - name: scdf-import-scripts
+          configMap:
+            name: scdf-import-scripts
+            items:
+              - key: scdf-stream.sh
+                path: scdf-stream.sh
+                mode: 0744
+              - key: scdf-task.sh
+                path: scdf-task.sh
+                mode: 0744
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scdf-import-scripts
+  labels:
+    app: scdf-import
+data:
+  scdf-stream.sh: |
+    ./wait-for-it.sh -t 360 scdf-server:80;
+    wget -qO- 'http://scdf-server:80/apps' --no-check-certificate --post-data='uri=https://dataflow.spring.io/kafka-maven-latest&force=true';
+    wget -qO- 'http://scdf-server:80/apps/sink/ver-log/3.0.1' --no-check-certificate --post-data='uri=maven://org.springframework.cloud.stream.app:log-sink-kafka:3.0.1';
+    wget -qO- 'http://scdf-server:80/apps/sink/ver-log/2.1.5.RELEASE' --no-check-certificate --post-data='uri=maven://org.springframework.cloud.stream.app:log-sink-kafka:2.1.5.RELEASE';
+    echo 'Maven Stream apps imported'
+  scdf-task.sh: |
+    wget -qO- 'http://scdf-server/apps' --no-check-certificate --post-data='uri=https://dataflow.spring.io/task-maven-latest&force=true';
+    echo 'Maven Task apps imported'

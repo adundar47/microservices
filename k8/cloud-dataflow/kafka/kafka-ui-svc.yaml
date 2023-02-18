@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-ui
+  labels:
+    app: kafka-ui
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      name: kafka-ui
+      targetPort: 8080
+      protocol: TCP
+      nodePort: 30808
+  selector:
+    app: kafka-ui

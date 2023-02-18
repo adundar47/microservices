@@ -133,3 +133,63 @@ if [[ $@ == *"stop-k8"* ]]; then
   note "Stopping integrations"
   kubectl delete -f k8/istio/integration/
 fi
+
+
+if [[ $@ == *"start-cloud-dataflow"* ]]; then
+  note "Starting kafka"
+  kubectl apply -f k8/cloud-dataflow/kafka/
+  sleep 2
+
+  note "Starting mariadb"
+  kubectl apply -f k8/cloud-dataflow/postgresql/
+  sleep 2
+
+  note "Starting adminer"
+  kubectl apply -f k8/cloud-dataflow/adminer/
+  sleep 2
+
+  note "Starting prometheus"
+  kubectl apply -f k8/cloud-dataflow/prometheus/
+  sleep 2
+
+  note "Starting prometheus-proxy"
+  kubectl apply -f k8/cloud-dataflow/prometheus-proxy/
+  sleep 2
+
+  note "Starting grafana"
+  kubectl apply -f k8/cloud-dataflow/grafana/
+  sleep 2
+
+  note "Starting server"
+  kubectl apply -f k8/cloud-dataflow/server/
+  sleep 2
+
+  note "Starting skipper"
+  kubectl apply -f k8/cloud-dataflow/skipper/
+  sleep 2
+
+  note "Starting app-import"
+  kubectl apply -f k8/cloud-dataflow/app-import/
+fi
+
+
+if [[ $@ == *"stop-cloud-dataflow"* ]]; then
+  note "Stopping kafka"
+  kubectl delete -f k8/cloud-dataflow/kafka/
+  note "Stopping mysql"
+  kubectl delete -f k8/cloud-dataflow/postgresql/
+  note "Stopping adminer"
+  kubectl delete -f k8/cloud-dataflow/adminer/
+  note "Stopping prometheus"
+  kubectl delete -f k8/cloud-dataflow/prometheus/
+  note "Stopping prometheus-proxy"
+  kubectl delete -f k8/cloud-dataflow/prometheus-proxy/
+  note "Stopping grafana"
+  kubectl delete -f k8/cloud-dataflow/grafana/
+  note "Stopping server"
+  kubectl delete -f k8/cloud-dataflow/server/
+  note "Stopping skipper"
+  kubectl delete -f k8/cloud-dataflow/skipper/
+  note "Stopping app-import"
+  kubectl delete -f k8/cloud-dataflow/app-import/
+fi

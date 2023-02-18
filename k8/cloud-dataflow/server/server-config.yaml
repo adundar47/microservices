@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scdf-server
+  labels:
+    app: scdf-server
+data:
+  application.yaml: |-
+    management:
+      metrics:
+        export:
+          prometheus:
+            enabled: true
+            rsocket:
+              enabled: true
+              host: prometheus-proxy
+              port: 7001
+    spring:
+      cloud:
+        dataflow:
+          metrics.dashboard:
+            url: 'https://grafana:3000'
+          task:
+            platform:
+              kubernetes:
+                accounts:
+                  default:
+                    limits:
+                      memory: 1024Mi
+      datasource:
+        url: jdbc:postgresql://postgresql:5432/postgres
+        username: root
+        password: ${postgresql-root-password}
+        driverClassName: org.postgresql.Driver
+        testOnBorrow: true
+        validationQuery: "SELECT 1"
