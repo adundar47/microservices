@@ -140,7 +140,7 @@ if [[ $@ == *"start-cloud-dataflow"* ]]; then
   kubectl apply -f k8/cloud-dataflow/kafka/
   sleep 2
 
-  note "Starting mariadb"
+  note "Starting postgresql"
   kubectl apply -f k8/cloud-dataflow/postgresql/
   sleep 2
 
@@ -176,7 +176,7 @@ fi
 if [[ $@ == *"stop-cloud-dataflow"* ]]; then
   note "Stopping kafka"
   kubectl delete -f k8/cloud-dataflow/kafka/
-  note "Stopping mysql"
+  note "Stopping postgresql"
   kubectl delete -f k8/cloud-dataflow/postgresql/
   note "Stopping adminer"
   kubectl delete -f k8/cloud-dataflow/adminer/

@@ -49,11 +49,11 @@ metadata:
     app: scdf-import
 data:
   scdf-stream.sh: |
-    ./wait-for-it.sh -t 360 scdf-server:80;
+    ./wait-for-it.sh -t 720 scdf-server:80;
     wget -qO- 'http://scdf-server:80/apps' --no-check-certificate --post-data='uri=https://dataflow.spring.io/kafka-maven-latest&force=true';
-    wget -qO- 'http://scdf-server:80/apps/sink/ver-log/3.0.1' --no-check-certificate --post-data='uri=maven://org.springframework.cloud.stream.app:log-sink-kafka:3.0.1';
+    #wget -qO- 'http://scdf-server:80/apps/sink/ver-log/3.0.1' --no-check-certificate --post-data='uri=maven://org.springframework.cloud.stream.app:log-sink-kafka:3.0.1';
     wget -qO- 'http://scdf-server:80/apps/sink/ver-log/2.1.5.RELEASE' --no-check-certificate --post-data='uri=maven://org.springframework.cloud.stream.app:log-sink-kafka:2.1.5.RELEASE';
     echo 'Maven Stream apps imported'
   scdf-task.sh: |
-    wget -qO- 'http://scdf-server/apps' --no-check-certificate --post-data='uri=https://dataflow.spring.io/task-maven-latest&force=true';
+    wget -qO- 'http://scdf-server:80/apps' --no-check-certificate --post-data='uri=https://dataflow.spring.io/task-maven-latest&force=true';
     echo 'Maven Task apps imported'
